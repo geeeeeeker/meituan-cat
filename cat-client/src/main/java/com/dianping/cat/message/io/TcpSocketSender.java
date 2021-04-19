@@ -49,13 +49,18 @@ import com.dianping.cat.message.spi.internal.DefaultMessageTree;
 import com.dianping.cat.status.StatusExtension;
 import com.dianping.cat.status.StatusExtensionRegister;
 
+/**
+ * 客户端消息发送者
+ */
 @Named
 public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 
 	public static final int SIZE = ApplicationSettings.getQueueSize();
 
+	/** 最大子节点数量 */
 	private static final int MAX_CHILD_NUMBER = 200;
 
+	/** 最大间隔时间，默认30秒 */
 	private static final int MAX_DURATION = 1000 * 30;
 
 	public static final long HOUR = 1000 * 60 * 60L;
@@ -95,9 +100,12 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 
 	@Override
 	public void initialize(List<InetSocketAddress> addresses) {
+
+		//初始化ChannelManager
 		m_channelManager = new ChannelManager(m_logger, addresses, m_configManager, m_factory);
 
 		Threads.forGroup("cat").start(this);
+
 		Threads.forGroup("cat").start(m_channelManager);
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -108,6 +116,7 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 			}
 		});
 
+		//注册客户端状态扩展
 		StatusExtensionRegister.getInstance().register(new StatusExtension() {
 
 			@Override
@@ -131,6 +140,7 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 		});
 	}
 
+
 	private void logQueueFullInfo(MessageTree tree) {
 		if (m_statistics != null) {
 			m_statistics.onOverflowed(tree);
@@ -145,6 +155,12 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 		tree = null;
 	}
 
+	/**
+	 * 合并阻塞队列内MessageTree，采用Transaction嵌套模型。
+	 *
+	 * @param handler
+	 * @return
+	 */
 	private MessageTree mergeTree(MessageQueue handler) {
 		int max = MAX_CHILD_NUMBER;
 		DefaultTransaction tran = new DefaultTransaction("System", "_CatMergeTree", null);
@@ -172,22 +188,31 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 		if (m_configManager.isAtomicMessage(tree)) {
 			boolean result = m_atomicQueue.offer(tree);
 
+			//入队失败打印错误信息
 			if (!result) {
 				logQueueFullInfo(tree);
 			}
 		} else {
 			boolean result = m_queue.offer(tree);
 
+			//入队失败打印错误信息
 			if (!result) {
 				logQueueFullInfo(tree);
 			}
 		}
 	}
 
+	/**
+	 * 处理原子消息
+	 */
 	private void processAtomicMessage() {
 		while (true) {
 			if (shouldMerge(m_atomicQueue)) {
+
+				//合并原子消息队列内MessageTree，生成一棵MessageTree
 				MessageTree tree = mergeTree(m_atomicQueue);
+
+				//推入普通消息队列
 				boolean result = m_queue.offer(tree);
 
 				if (!result) {
@@ -199,17 +224,26 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 		}
 	}
 
+	/**
+	 * 处理普通消息
+	 */
 	private void processNormalMessage() {
 		while (true) {
 			ChannelFuture channel = m_channelManager.channel();
 
 			if (channel != null) {
 				try {
+
+					//拉取普通消息队列内消息树
 					MessageTree tree = m_queue.poll();
 
 					if (tree != null) {
+
+						//发送普通消息
 						sendInternal(channel, tree);
+
 						tree.setMessage(null);
+
 					} else {
 						try {
 							Thread.sleep(5);
@@ -231,6 +265,9 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 		}
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public void run() {
 		m_active = true;
@@ -254,6 +291,7 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 					offer(tree);
 				}
 			} else {
+				//消息树发送完毕，则当前线程退出运行
 				break;
 			}
 		}
@@ -265,6 +303,7 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 			double sampleRatio = m_configManager.getSampleRatio();
 
 			if (tree.canDiscard() && sampleRatio < 1.0 && (!tree.isHitSample())) {
+				//在客户端处理消息树
 				processTreeInClient(tree);
 			} else {
 				offer(tree);
@@ -272,32 +311,56 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 		}
 	}
 
+	/**
+	 * 客户端本地聚合器，聚合消息树
+	 *
+	 * @param tree
+	 */
 	private void processTreeInClient(MessageTree tree) {
 		LocalAggregator.aggregate(tree);
 	}
 
+	/**
+	 * 往CatServer发送消息
+	 *
+	 * @param channel
+	 * @param tree
+	 */
 	public void sendInternal(ChannelFuture channel, MessageTree tree) {
+
+		//确保设置消息ID
 		if (tree.getMessageId() == null) {
 			tree.setMessageId(m_factory.getNextId());
 		}
 
+		//编码消息
 		ByteBuf buf = m_codec.encode(tree);
 
 		int size = buf.readableBytes();
 
+		//发送消息
 		channel.channel().writeAndFlush(buf);
 
+		//统计发送的消息字节数
 		if (m_statistics != null) {
 			m_statistics.onBytes(size);
 		}
 	}
 
+	/**
+	 * 是否需要合并消息
+	 *
+	 * @param queue 消息队列
+	 * @return
+	 */
 	private boolean shouldMerge(MessageQueue queue) {
 		MessageTree tree = queue.peek();
 
 		if (tree != null) {
+
 			long firstTime = tree.getMessage().getTimestamp();
 
+			//消息延迟发送超30秒，或消息子节点达200，需要合并发送
 			if (System.currentTimeMillis() - firstTime > MAX_DURATION || queue.size() >= MAX_CHILD_NUMBER) {
 				return true;
 			}

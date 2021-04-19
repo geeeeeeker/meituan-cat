@@ -33,19 +33,26 @@ import com.dianping.cat.report.alert.AlarmManager;
 import com.dianping.cat.report.task.DefaultTaskConsumer;
 import com.dianping.cat.report.task.reload.ReportReloadTask;
 
+/**
+ * Cat服务端主进程
+ */
 @Named(type = Module.class, value = CatHomeModule.ID)
 public class CatHomeModule extends AbstractModule {
 	public static final String ID = "cat-home";
 
 	@Override
 	protected void execute(ModuleContext ctx) throws Exception {
+
 		ServerConfigManager serverConfigManager = ctx.lookup(ServerConfigManager.class);
+
 		ReportReloadTask reportReloadTask = ctx.lookup(ReportReloadTask.class);
 
+		//报表重载线程
 		Threads.forGroup("cat").start(reportReloadTask);
 
 		ctx.lookup(MessageConsumer.class);
 
+		//判断当前服务器节点是否为消费机，若是作业节点则启动任务消费线程
 		if (serverConfigManager.isJobMachine()) {
 			DefaultTaskConsumer taskConsumer = ctx.lookup(DefaultTaskConsumer.class);
 
@@ -54,11 +61,15 @@ public class CatHomeModule extends AbstractModule {
 
 		AlarmManager alarmManager = ctx.lookup(AlarmManager.class);
 
+		//判断当前服务器节点是否为报警机，若是报警节点则启动5种报表报警线程
 		if (serverConfigManager.isAlertMachine()) {
 			alarmManager.startAlarm();
 		}
 
+		//消息消费者
 		final MessageConsumer consumer = ctx.lookup(MessageConsumer.class);
+
+		//消费者进程退出时，再额外执行一次checkpoint操作用于保存数据
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 
 			@Override
@@ -68,6 +79,12 @@ public class CatHomeModule extends AbstractModule {
 		});
 	}
 
+	/**
+	 * cat-home依赖cat-consumer、cat-hadoop、cat-core模块
+	 *
+	 * @param ctx
+	 * @return
+	 */
 	@Override
 	public Module[] getDependencies(ModuleContext ctx) {
 		return ctx.getModules(CatConsumerModule.ID, CatHadoopModule.ID);
@@ -75,10 +92,13 @@ public class CatHomeModule extends AbstractModule {
 
 	@Override
 	protected void setup(ModuleContext ctx) throws Exception {
+
 		final TcpSocketReceiver messageReceiver = ctx.lookup(TcpSocketReceiver.class);
 
+		//初始化消息接收器
 		messageReceiver.init();
 
+		//注册关闭钩子，用于优雅关闭消息接收器
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 
 			@Override

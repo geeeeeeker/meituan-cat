@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageBlock {
+
 	private String m_dataFile;
 
 	private byte[] m_data;

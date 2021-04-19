@@ -21,7 +21,20 @@ package com.dianping.cat.analysis;
 import java.util.List;
 
 public interface MessageAnalyzerManager {
+
+	/**
+	 * 列出所有消费分析器名称
+	 *
+	 * @return
+	 */
 	public List<String> getAnalyzerNames();
 
+	/**
+	 * 检索消费分析器列表
+	 *
+	 * @param name
+	 * @param startTime
+	 * @return
+	 */
 	public List<MessageAnalyzer> getAnalyzer(String name, long startTime);
 }

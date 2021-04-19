@@ -26,6 +26,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
 public class MessageBlockWriter {
+
 	private RandomAccessFile m_indexFile;
 
 	private RandomAccessFile m_dataFile;
@@ -37,14 +38,22 @@ public class MessageBlockWriter {
 	private int m_blockAddress;
 
 	public MessageBlockWriter(File dataFile) throws IOException {
+
+		//消息块索引文件。在数据块文件名基础上加后缀.idx
 		File indexFile = new File(dataFile.getAbsolutePath() + ".idx");
 
+		//创建数据块父目录。若已存在父目录则忽略；否则需要新建。
 		dataFile.getParentFile().mkdirs();
+
 		m_indexFile = new RandomAccessFile(indexFile, "rw");
 		m_dataFile = new RandomAccessFile(dataFile, "rw");
+
 		m_indexChannel = m_indexFile.getChannel();
 		m_dataChannel = m_dataFile.getChannel();
+
+		//数据块文件长度
 		m_blockAddress = (int) m_dataFile.length();
+
 		// m_dataFile.seek(m_blockAddress); // move to end
 		m_dataChannel.position(m_blockAddress);
 	}
@@ -59,6 +68,12 @@ public class MessageBlockWriter {
 		}
 	}
 
+	/**
+	 * 向文件中追加消息块
+	 *
+	 * @param block
+	 * @throws IOException
+	 */
 	public synchronized void writeBlock(MessageBlock block) throws IOException {
 		int len = block.getBlockSize();
 		byte[] data = block.getData();

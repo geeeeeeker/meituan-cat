@@ -42,12 +42,18 @@ import org.unidal.lookup.annotation.Named;
 
 import java.util.List;
 
+/**
+ * 消费机消息接收者
+ */
 @Named(type = TcpSocketReceiver.class)
 public final class TcpSocketReceiver implements LogEnabled {
 
 	@Inject
 	protected ServerConfigManager m_serverConfigManager;
 
+	/**
+	 * 消息处理器
+	 */
 	@Inject
 	private MessageHandler m_handler;
 
@@ -67,10 +73,13 @@ public final class TcpSocketReceiver implements LogEnabled {
 	public synchronized void destory() {
 		try {
 			m_logger.info("start shutdown socket, port " + m_port);
+
 			m_future.channel().closeFuture();
 			m_bossGroup.shutdownGracefully();
 			m_workerGroup.shutdownGracefully();
+
 			m_logger.info("shutdown socket success");
+
 		} catch (Exception e) {
 			m_logger.warn(e.getMessage(), e);
 		}
@@ -98,6 +107,12 @@ public final class TcpSocketReceiver implements LogEnabled {
 		}
 	}
 
+	/**
+	 * 启动消息接收服务
+	 *
+	 * @param port
+	 * @throws InterruptedException
+	 */
 	public synchronized void startServer(int port) throws InterruptedException {
 		boolean linux = getOSMatches("Linux") || getOSMatches("LINUX");
 		int threads = 24;
@@ -113,8 +128,8 @@ public final class TcpSocketReceiver implements LogEnabled {
 			protected void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
 
-				pipeline.addLast("decode", new MessageDecoder());
-				pipeline.addLast("encode", new ClientMessageEncoder());
+				pipeline.addLast("decode", new MessageDecoder()); //消息解码器
+				pipeline.addLast("encode", new ClientMessageEncoder()); //消息编码器
 			}
 		});
 
@@ -125,13 +140,18 @@ public final class TcpSocketReceiver implements LogEnabled {
 
 		try {
 			m_future = bootstrap.bind(port).sync();
-			m_logger.info("start netty server!");
+			m_logger.info("启动Netty网络服务器!");
 		} catch (Exception e) {
 			m_logger.error("Started Netty Server Failed:" + port, e);
 		}
 	}
 
+	/**
+	 * 消息解码器，把字节数组解码为一棵消息树
+	 */
 	public class MessageDecoder extends ByteToMessageDecoder {
+
+		//处理的消息数量计数器
 		private long m_processCount;
 
 		@Override
@@ -152,12 +172,17 @@ public final class TcpSocketReceiver implements LogEnabled {
 					readBytes.markReaderIndex();
 					//readBytes.readInt();
 
+					//消息解码，转换成消息树结构
 					DefaultMessageTree tree = (DefaultMessageTree) CodecHandler.decode(readBytes);
 
 					// readBytes.retain();
 					readBytes.resetReaderIndex();
 					tree.setBuffer(readBytes);
+
+					//核心逻辑：处理消息树结构，实际委托给MessageConsumer消费
 					m_handler.handle(tree);
+
+					//统计处理进度
 					m_processCount++;
 
 					long flag = m_processCount % CatConstants.SUCCESS_COUNT;

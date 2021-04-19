@@ -29,11 +29,17 @@ import org.unidal.lookup.annotation.Inject;
 import com.dianping.cat.Cat;
 import com.dianping.cat.statistic.ServerStatisticManager;
 
+/**
+ * 周期管理器
+ */
 public class PeriodManager implements Task {
+
 	public static long EXTRATIME = 3 * 60 * 1000L;
 
+	//周期策略
 	private PeriodStrategy m_strategy;
 
+	//周期表
 	private List<Period> m_periods = new ArrayList<Period>();
 
 	private boolean m_active;
@@ -49,7 +55,10 @@ public class PeriodManager implements Task {
 
 	public PeriodManager(long duration, MessageAnalyzerManager analyzerManager,	ServerStatisticManager serverStateManager,
 							Logger logger) {
-		m_strategy = new PeriodStrategy(duration, EXTRATIME, EXTRATIME);
+
+		//初始化周期策略，不可配置，仅能通过源码修改实现周期跨度修改
+		m_strategy = new PeriodStrategy(duration, EXTRATIME /* 3分钟*/, EXTRATIME /* 3分钟 */);
+
 		m_active = true;
 		m_analyzerManager = analyzerManager;
 		m_serverStateManager = serverStateManager;
@@ -70,6 +79,12 @@ public class PeriodManager implements Task {
 		}
 	}
 
+	/**
+	 * 搜索当前时间戳所属周期
+	 *
+	 * @param timestamp
+	 * @return
+	 */
 	public Period findPeriod(long timestamp) {
 		for (Period period : m_periods) {
 			if (period.isIn(timestamp)) {
@@ -85,6 +100,9 @@ public class PeriodManager implements Task {
 		return "RealtimeConsumer-PeriodManager";
 	}
 
+	/**
+	 * 初始化周期表
+	 */
 	public void init() {
 		long startTime = m_strategy.next(System.currentTimeMillis());
 

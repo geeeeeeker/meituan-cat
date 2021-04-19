@@ -30,11 +30,14 @@ import org.unidal.test.jetty.JettyServer;
 @RunWith(JUnit4.class)
 public class TestServer extends JettyServer {
 	public static void main(String[] args) throws Exception {
+
+		System.setProperty("warRoot", "/Users/avanti/opensource/meituan/cat/cat-home/src/test/webapp");
+
 		TestServer server = new TestServer();
 		System.setProperty("devMode", "true");
 		server.startServer();
 		server.startWebApp();
-		server.stopServer();
+//		server.stopServer();
 	}
 
 	@Before
@@ -59,7 +62,7 @@ public class TestServer extends JettyServer {
 
 	@Test
 	public void startWebApp() throws Exception {
-		super.startServer();
+//		super.startServer();
 		display("/cat/r");
 		waitForAnyKey();
 	}

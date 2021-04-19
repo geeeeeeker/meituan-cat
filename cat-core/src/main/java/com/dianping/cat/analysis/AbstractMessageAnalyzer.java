@@ -53,13 +53,22 @@ public abstract class AbstractMessageAnalyzer<R> extends ContainerHolder impleme
 
 	private AtomicBoolean m_active = new AtomicBoolean(true);
 
+	/**
+	 * 分析消息队列内的消息树
+	 *
+	 * @param queue 消息队列
+	 */
 	@Override
 	public void analyze(MessageQueue queue) {
+
 		while (!isTimeout() && isActive()) {
+
+			//拉取消息
 			MessageTree tree = queue.poll();
 
 			if (tree != null) {
 				try {
+					//处理消息树
 					process(tree);
 				} catch (Throwable e) {
 					m_errors++;
@@ -71,6 +80,7 @@ public abstract class AbstractMessageAnalyzer<R> extends ContainerHolder impleme
 			}
 		}
 
+		//降级逻辑：一旦出现超时，或者任务被关闭
 		while (true) {
 			MessageTree tree = queue.poll();
 
@@ -112,6 +122,12 @@ public abstract class AbstractMessageAnalyzer<R> extends ContainerHolder impleme
 		return m_extraTime;
 	}
 
+	/**
+	 * 查询应用程序相关报表
+	 *
+	 * @param domain 应用程序名称
+	 * @return
+	 */
 	public abstract R getReport(String domain);
 
 	@Override
@@ -148,8 +164,16 @@ public abstract class AbstractMessageAnalyzer<R> extends ContainerHolder impleme
 		return currentTime > endTime;
 	}
 
+	/**
+	 * 加载报告
+	 */
 	protected abstract void loadReports();
 
+	/**
+	 * 处理消息树
+	 *
+	 * @param tree 消息树
+	 */
 	protected abstract void process(MessageTree tree);
 
 	public void setIndex(int index) {

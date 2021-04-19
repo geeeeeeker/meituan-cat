@@ -33,6 +33,9 @@ import org.unidal.web.AbstractContainerServlet;
 
 import com.dianping.cat.Cat;
 
+/**
+ * CAT服务端监听入口
+ */
 public class CatServlet extends AbstractContainerServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -52,6 +55,18 @@ public class CatServlet extends AbstractContainerServlet {
 		}
 	}
 
+	/**
+	 * 初始化组件
+	 *
+	 * public void init(ServletConfig config) {
+	 *   super.init(config)
+	 *   ...
+	 *   this.initComponents(config);
+	 * }
+	 *
+	 * @param servletConfig
+	 * @throws ServletException
+	 */
 	@Override
 	protected void initComponents(ServletConfig servletConfig) throws ServletException {
 		try {

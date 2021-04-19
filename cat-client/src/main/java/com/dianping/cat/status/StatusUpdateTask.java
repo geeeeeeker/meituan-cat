@@ -44,6 +44,9 @@ import com.dianping.cat.message.spi.MessageStatistics;
 import com.dianping.cat.status.model.entity.Extension;
 import com.dianping.cat.status.model.entity.StatusInfo;
 
+/**
+ * 状态更新任务，用于每分钟定时向CAT服务端发送心跳包
+ */
 @Named
 public class StatusUpdateTask implements Task, Initializable {
 	@Inject
@@ -56,6 +59,7 @@ public class StatusUpdateTask implements Task, Initializable {
 
 	private String m_ipAddress;
 
+	//定时发送间隔1分钟
 	private long m_interval = 60 * 1000; // 60 seconds
 
 	private String m_jars;
@@ -109,13 +113,25 @@ public class StatusUpdateTask implements Task, Initializable {
 		}
 	}
 
+	/**
+	 * 获取任务名称
+	 *
+	 * @return 任务名称
+	 */
 	@Override
 	public String getName() {
 		return "StatusUpdateTask";
 	}
 
+	/**
+	 * 初始化逻辑
+	 *
+	 * @throws InitializationException
+	 */
 	@Override
 	public void initialize() throws InitializationException {
+
+		//获取本地助力地址
 		m_ipAddress = NetworkInterfaceManager.INSTANCE.getLocalHostAddress();
 	}
 

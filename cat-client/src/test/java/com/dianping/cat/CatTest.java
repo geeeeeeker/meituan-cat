@@ -18,6 +18,7 @@
  */
 package com.dianping.cat;
 
+import com.dianping.cat.message.Transaction;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -48,5 +49,14 @@ public class CatTest {
 		Cat.logHeartbeat("logHeartbeat", "logHeartbeat", Message.SUCCESS, null);
 
 		Assert.assertEquals(true, Cat.isInitialized());
+	}
+
+	@Test
+	public void newCat() {
+
+		final Transaction tx = Cat.newTransaction("HttpClient", "doPost");
+		tx.setStatus(Message.SUCCESS);
+		tx.complete();
+
 	}
 }

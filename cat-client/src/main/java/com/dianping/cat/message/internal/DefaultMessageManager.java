@@ -50,6 +50,9 @@ import com.dianping.cat.message.spi.MessageManager;
 import com.dianping.cat.message.spi.MessageTree;
 import com.dianping.cat.message.spi.internal.DefaultMessageTree;
 
+/**
+ * 默认消息管理器
+ */
 @Named(type = MessageManager.class)
 public class DefaultMessageManager extends ContainerHolder implements MessageManager, Initializable, LogEnabled {
 
@@ -80,10 +83,16 @@ public class DefaultMessageManager extends ContainerHolder implements MessageMan
 
 	private Logger m_logger;
 
+	/**
+	 * 在当前线程上下文添加消息
+	 *
+	 * @param message
+	 */
 	@Override
 	public void add(Message message) {
 		Context ctx = getContext();
 
+		//拿到
 		if (ctx != null) {
 			ctx.add(message);
 		}
@@ -124,15 +133,27 @@ public class DefaultMessageManager extends ContainerHolder implements MessageMan
 		}
 	}
 
+	/**
+	 * 消息构建结束时调用flush
+	 *
+	 * @param tree
+	 * @param clearContext
+	 */
 	public void flush(MessageTree tree, boolean clearContext) {
+
+		//获取消息发送者
 		MessageSender sender = m_transportManager.getSender();
 
 		if (sender != null && isMessageEnabled()) {
+
+			//发送消息树
 			sender.send(tree);
 
+			//重置线程上下文
 			if (clearContext) {
 				reset();
 			}
+
 		} else {
 			m_throttleTimes++;
 
@@ -323,11 +344,13 @@ public class DefaultMessageManager extends ContainerHolder implements MessageMan
 	public void setup() {
 		Context ctx;
 
+		//初始化上下文
 		if (m_domain != null) {
 			ctx = new Context(m_domain.getId(), m_hostName, m_domain.getIp());
 		} else {
 			ctx = new Context("Unknown", m_hostName, "");
 		}
+
 		double samplingRate = m_configManager.getSampleRatio();
 
 		if (samplingRate < 1.0 && hitSample(samplingRate)) {
@@ -365,6 +388,7 @@ public class DefaultMessageManager extends ContainerHolder implements MessageMan
 	}
 
 	class Context {
+
 		private MessageTree m_tree;
 
 		private Stack<Transaction> m_stack;
@@ -378,7 +402,10 @@ public class DefaultMessageManager extends ContainerHolder implements MessageMan
 		private Set<Throwable> m_knownExceptions;
 
 		public Context(String domain, String hostName, String ipAddress) {
+
+			//创建消息树
 			m_tree = new DefaultMessageTree();
+
 			m_stack = new Stack<Transaction>();
 
 			Thread thread = Thread.currentThread();
@@ -391,10 +418,16 @@ public class DefaultMessageManager extends ContainerHolder implements MessageMan
 			m_tree.setDomain(domain);
 			m_tree.setHostName(hostName);
 			m_tree.setIpAddress(ipAddress);
+
 			m_length = 1;
 			m_knownExceptions = new HashSet<Throwable>();
 		}
 
+		/**
+		 * 往线程上下文增加消息
+		 *
+		 * @param message
+		 */
 		public void add(Message message) {
 			if (m_stack.isEmpty()) {
 				MessageTree tree = m_tree.copy();

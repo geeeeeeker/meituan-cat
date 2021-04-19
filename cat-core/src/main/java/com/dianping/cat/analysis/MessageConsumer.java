@@ -22,12 +22,27 @@ import java.util.List;
 
 import com.dianping.cat.message.spi.MessageTree;
 
+/** 消息消费者 */
 public interface MessageConsumer {
-	public void consume(MessageTree tree);
 
-	public void doCheckpoint();
+	/** 消费消息树封装的消息 */
+	void consume(MessageTree tree);
 
-	public List<MessageAnalyzer> getCurrentAnalyzer(String name);
+	/** 持久化当前消费记录 */
+	void doCheckpoint();
 
-	public List<MessageAnalyzer> getLastAnalyzer(String name);
+	/**
+	 *
+	 *
+	 * @param name
+	 * @return
+	 */
+	List<MessageAnalyzer> getCurrentAnalyzer(String name);
+
+	/**
+	 *
+	 * @param name
+	 * @return
+	 */
+	List<MessageAnalyzer> getLastAnalyzer(String name);
 }

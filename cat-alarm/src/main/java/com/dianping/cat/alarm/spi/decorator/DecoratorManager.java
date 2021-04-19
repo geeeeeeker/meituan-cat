@@ -30,11 +30,20 @@ import org.unidal.tuple.Pair;
 import com.dianping.cat.alarm.spi.AlertEntity;
 import com.dianping.cat.alarm.spi.AlertType;
 
+/**
+ * 管理装饰器
+ */
 @Named
 public class DecoratorManager extends ContainerHolder implements Initializable {
 
-	private Map<String, Decorator> m_decorators = new HashMap<String, Decorator>();
+	private Map<String /* 报警类型名称 */, Decorator> m_decorators = new HashMap<String, Decorator>();
 
+	/**
+	 * 生成报警标题及内容
+	 *
+	 * @param alert
+	 * @return
+	 */
 	public Pair<String, String> generateTitleAndContent(AlertEntity alert) {
 		AlertType alertType = alert.getType();
 		Decorator decorator = m_decorators.get(alertType.getName());
@@ -49,6 +58,11 @@ public class DecoratorManager extends ContainerHolder implements Initializable {
 		}
 	}
 
+	/**
+	 * 初始化时获取所有Decorator接口实现类，初始化m_decorators缓存表。
+	 *
+	 * @throws InitializationException
+	 */
 	@Override
 	public void initialize() throws InitializationException {
 		m_decorators = lookupMap(Decorator.class);

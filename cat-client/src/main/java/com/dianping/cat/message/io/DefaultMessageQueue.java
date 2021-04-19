@@ -25,6 +25,9 @@ import java.util.concurrent.TimeUnit;
 import com.dianping.cat.message.spi.MessageQueue;
 import com.dianping.cat.message.spi.MessageTree;
 
+/**
+ * 默认消息树队列，内部依赖给予数组有界阻塞队列。
+ */
 public class DefaultMessageQueue implements MessageQueue {
 
 	private BlockingQueue<MessageTree> m_queue;

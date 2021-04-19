@@ -145,6 +145,11 @@ public class AlertEntity {
 		return this;
 	}
 
+	/**
+	 * 获取报警类型常量
+	 *
+	 * @return
+	 */
 	public AlertType getType() {
 		return AlertType.getTypeByName(m_type);
 	}

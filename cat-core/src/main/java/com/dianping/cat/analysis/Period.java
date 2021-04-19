@@ -43,7 +43,7 @@ public class Period {
 
 	private long m_endTime;
 
-	private Map<String, List<PeriodTask>> m_tasks;
+	private Map<String /* 分析器名称 */, List<PeriodTask> > m_tasks;
 
 	@Inject
 	private MessageAnalyzerManager m_analyzerManager;
@@ -86,12 +86,18 @@ public class Period {
 	}
 
 	public void distribute(MessageTree tree) {
+
+		//应用消息计数+1
 		m_serverStateManager.addMessageTotal(tree.getDomain(), 1);
+
 		boolean success = true;
 		String domain = tree.getDomain();
 
 		for (Entry<String, List<PeriodTask>> entry : m_tasks.entrySet()) {
+
+			//周期任务列表
 			List<PeriodTask> tasks = entry.getValue();
+
 			int length = tasks.size();
 			int index = 0;
 			boolean manyTasks = length > 1;
@@ -147,6 +153,8 @@ public class Period {
 
 	public List<MessageAnalyzer> getAnalyzer(String name) {
 		List<MessageAnalyzer> analyzers = new ArrayList<MessageAnalyzer>();
+
+
 		List<PeriodTask> tasks = m_tasks.get(name);
 
 		if (tasks != null) {
@@ -169,10 +177,21 @@ public class Period {
 		return analyzers;
 	}
 
+	/**
+	 * 获取周期开始时间戳
+	 *
+	 * @return
+	 */
 	public long getStartTime() {
 		return m_startTime;
 	}
 
+	/**
+	 * 判断时间戳是否命中周期
+	 *
+	 * @param timestamp 当前时间戳
+	 * @return
+	 */
 	public boolean isIn(long timestamp) {
 		return timestamp >= m_startTime && timestamp < m_endTime;
 	}

@@ -122,6 +122,7 @@ public class TaskHelper {
 		return cal.getTime();
 	}
 
+
 	public static Date todayZero(Date period) {
 		if (period == null) {
 			period = new Date();

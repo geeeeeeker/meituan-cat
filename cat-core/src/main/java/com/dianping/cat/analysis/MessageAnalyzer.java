@@ -22,14 +22,27 @@ import com.dianping.cat.message.spi.MessageQueue;
 import com.dianping.cat.message.spi.MessageTree;
 import com.dianping.cat.report.ReportManager;
 
+/**
+ * 消息分析器
+ */
 public interface MessageAnalyzer {
 
 	public boolean isEligable(MessageTree tree);
 
+	/**
+	 * 分析消息队列
+	 *
+	 * @param queue 消息队列
+	 */
 	public void analyze(MessageQueue queue);
 
 	public void destroy();
 
+	/**
+	 * 执行checkpoint
+	 *
+	 * @param atEnd
+	 */
 	public void doCheckpoint(boolean atEnd);
 
 	public long getStartTime();

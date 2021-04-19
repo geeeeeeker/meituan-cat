@@ -36,7 +36,11 @@ import com.dianping.cat.home.utilization.entity.UtilizationReport;
 
 public class TransactionReportVisitor extends BaseVisitor {
 
+	/** 原生仅支持Memcached监控 */
 	private static final String MEMCACHED = "Cache.memcached";
+
+	/** 扩展Redis监控 */
+	private static final String REDIS = "Cache.redis";
 
 	private String m_domain;
 
@@ -54,6 +58,7 @@ public class TransactionReportVisitor extends BaseVisitor {
 		m_types.add("PigeonCall");
 		m_types.add("SQL");
 		m_types.add(MEMCACHED);
+		m_types.add(REDIS);
 	}
 
 	private void copyAttribute(TransactionType type, ApplicationState state) {
@@ -116,6 +121,8 @@ public class TransactionReportVisitor extends BaseVisitor {
 			typeName = "PigeonCall";
 		} else if (typeName.startsWith(MEMCACHED)) {
 			typeName = MEMCACHED;
+		} else if (typeName.startsWith(REDIS)) {
+			typeName = REDIS;
 		}
 		ApplicationState applicationState = null;
 

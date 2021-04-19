@@ -23,6 +23,9 @@ import java.util.Date;
 
 import com.dianping.cat.message.spi.MessageTree;
 
+/**
+ * 消息存储分桶抽象
+ */
 public interface MessageBucket {
 	public void close() throws IOException;
 

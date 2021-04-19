@@ -49,9 +49,11 @@ public class ComponentsConfigurator extends AbstractResourceConfigurator {
 		all.add(A(DefaultMessageManager.class));
 		all.add(A(DefaultMessageProducer.class));
 
+		//通信组件
 		all.add(A(TcpSocketSender.class));
 		all.add(A(DefaultTransportManager.class));
 
+		//统计上报组件
 		all.add(A(DefaultMessageStatistics.class));
 		all.add(A(StatusUpdateTask.class));
 

@@ -18,13 +18,37 @@
  */
 package com.dianping.cat.message.spi;
 
+/**
+ * 消息队列
+ */
 public interface MessageQueue {
-	public boolean offer(MessageTree tree);
 
-	public MessageTree peek();
+  /**
+   * 消息入队
+   *
+   * @param tree
+   * @return
+   */
+  public boolean offer(MessageTree tree);
 
-	public MessageTree poll();
+  /**
+   * 获取队首消息
+   *
+   * @return
+   */
+  public MessageTree peek();
 
-	// the current size of the queue
-	public int size();
+  /**
+   * 消息出队
+   *
+   * @return
+   */
+  public MessageTree poll();
+
+  /**
+   * 查询队列当前大小
+   *
+   * @return
+   */
+  public int size();
 }

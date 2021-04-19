@@ -18,6 +18,9 @@
  */
 package com.dianping.cat.analyzer;
 
+/**
+ * 分位线计算器
+ */
 public class DurationComputer {
 
 	public static int computeDuration(int duration) {

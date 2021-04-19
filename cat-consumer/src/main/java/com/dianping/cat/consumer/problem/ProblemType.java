@@ -18,7 +18,11 @@
  */
 package com.dianping.cat.consumer.problem;
 
+/**
+ * Problem报表类型
+ */
 public enum ProblemType {
+
 	ERROR("error"),
 
 	FAILURE("failure"),

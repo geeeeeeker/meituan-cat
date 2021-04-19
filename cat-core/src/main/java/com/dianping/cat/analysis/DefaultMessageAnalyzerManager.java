@@ -35,6 +35,9 @@ import org.unidal.lookup.annotation.Named;
 import com.dianping.cat.Cat;
 import com.dianping.cat.config.server.ServerConfigManager;
 
+/**
+ * 默认的消费分析器管理者
+ */
 @Named(type = MessageAnalyzerManager.class)
 public class DefaultMessageAnalyzerManager extends ContainerHolder
 						implements MessageAnalyzerManager, Initializable,	LogEnabled {
@@ -46,6 +49,7 @@ public class DefaultMessageAnalyzerManager extends ContainerHolder
 
 	private long m_extraTime = 3 * MINUTE;
 
+	//实时消费分析器列表
 	private List<String> m_analyzerNames;
 
 	private Map<Long, Map<String, List<MessageAnalyzer>>> m_analyzers = new HashMap<Long, Map<String, List<MessageAnalyzer>>>();
@@ -119,7 +123,9 @@ public class DefaultMessageAnalyzerManager extends ContainerHolder
 
 	@Override
 	public void initialize() throws InitializationException {
-		Map<String, MessageAnalyzer> map = lookupMap(MessageAnalyzer.class);
+
+		//从容器中获取所有的消息分析器映射关系
+		Map<String /* 消费分析器ID */, MessageAnalyzer /* 消费分析器 */> map = lookupMap(MessageAnalyzer.class);
 
 		for (MessageAnalyzer analyzer : map.values()) {
 			analyzer.destroy();

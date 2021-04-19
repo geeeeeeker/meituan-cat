@@ -223,6 +223,7 @@ public class LogviewProcessor implements Task, Initializable {
 	private void uploadFileToHdfs(String path) {
 		File file = new File(m_baseDir, path);
 
+		//往hdfs上传logview文件
 		m_hdfsUploader.uploadLogviewFile(path, file);
 	}
 

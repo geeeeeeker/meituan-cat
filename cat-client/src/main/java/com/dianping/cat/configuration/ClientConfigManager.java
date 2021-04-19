@@ -35,6 +35,11 @@ public interface ClientConfigManager {
 
 	public double getSampleRatio();
 
+	/**
+	 * 获取CatServer配置信息列表
+	 *
+	 * @return
+	 */
 	public List<Server> getServers();
 
 	public int getTaggedTransactionCacheSize();
@@ -45,6 +50,11 @@ public interface ClientConfigManager {
 
 	public boolean isBlock();
 
+	/**
+	 * 判断是否开启Cat
+	 *
+	 * @return true,初始化Cat实例；false,
+	 */
 	public boolean isCatEnabled();
 
 	public boolean isDumpLocked();

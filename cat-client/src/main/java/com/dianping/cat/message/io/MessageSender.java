@@ -23,10 +23,27 @@ import java.util.List;
 
 import com.dianping.cat.message.spi.MessageTree;
 
+/**
+ * 消息发送者抽象
+ */
 public interface MessageSender {
+
+	/**
+	 * 初始化发送客户端
+	 *
+	 * @param addresses 所有的cat-consumer网路地址
+	 */
 	public void initialize(List<InetSocketAddress> addresses);
 
+	/**
+	 * 发送消息
+	 *
+	 * @param tree
+	 */
 	public void send(MessageTree tree);
 
+	/**
+	 * 停止发送
+	 */
 	public void shutdown();
 }

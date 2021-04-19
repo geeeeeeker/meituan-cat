@@ -60,6 +60,12 @@ public class PeriodTask implements Task, LogEnabled {
 		m_logger = logger;
 	}
 
+	/**
+	 *
+	 *
+	 * @param tree
+	 * @return
+	 */
 	public boolean enqueue(MessageTree tree) {
 		if (m_analyzer.isEligable(tree)) {
 			boolean result = m_queue.offer(tree);

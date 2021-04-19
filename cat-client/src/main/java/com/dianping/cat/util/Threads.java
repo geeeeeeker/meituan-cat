@@ -58,9 +58,21 @@ public class Threads {
 		s_manager.removeListener(listener);
 	}
 
+	/**
+	 * 任务抽象
+	 */
 	public static interface Task extends Runnable {
+
+		/**
+		 * 获取任务名称
+		 *
+		 * @return
+		 */
 		public String getName();
 
+		/**
+		 * 关闭任务。可通过设置标记位结束任务运行。
+		 */
 		public void shutdown();
 	}
 

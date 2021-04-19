@@ -90,6 +90,7 @@ public class PlainTextMessageCodec implements MessageCodec {
 	@Override
 	public MessageTree decode(ByteBuf buf) {
 		buf.readInt(); // read the length of the message tree
+
 		MessageTree tree = new DefaultMessageTree();
 
 		decode(buf, tree);

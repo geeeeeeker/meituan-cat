@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 
 public class TimerSyncTask implements Task {
 
+	/** 定时器同步任务每分钟执行一次 */
 	private static final long DURATION = TimeHelper.ONE_MINUTE;
 
 	private static TimerSyncTask m_instance = new TimerSyncTask();
@@ -76,6 +77,8 @@ public class TimerSyncTask implements Task {
 
 					@Override
 					public void run() {
+
+						//定时同步处理器，每分钟上报一次
 						final Transaction t = Cat.newTransaction("TimerSync", handler.getName());
 
 						try {

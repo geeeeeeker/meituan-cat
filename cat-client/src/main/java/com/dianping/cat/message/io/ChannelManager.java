@@ -45,6 +45,9 @@ import org.unidal.tuple.Pair;
 import com.dianping.cat.configuration.ClientConfigManager;
 import com.dianping.cat.message.internal.MessageIdFactory;
 
+/**
+ * 通道管理器
+ */
 public class ChannelManager implements Task {
 
 	private ClientConfigManager m_configManager;
@@ -218,7 +221,7 @@ public class ChannelManager implements Task {
 
 		try {
 			future = m_bootstrap.connect(address);
-			future.awaitUninterruptibly(100, TimeUnit.MILLISECONDS); // 100 ms
+			future.awaitUninterruptibly(1000, TimeUnit.MILLISECONDS); // 100 ms
 
 			if (!future.isSuccess()) {
 				m_logger.error("Error when try connecting to " + address);
@@ -248,10 +251,16 @@ public class ChannelManager implements Task {
 		}
 	}
 
+	/**
+	 *
+	 *
+	 * @return
+	 */
 	@Override
 	public String getName() {
 		return "TcpSocketSender-ChannelManager";
 	}
+
 
 	private ChannelHolder initChannel(List<InetSocketAddress> addresses, String serverConfig) {
 		try {
@@ -333,6 +342,12 @@ public class ChannelManager implements Task {
 		return new ArrayList<InetSocketAddress>();
 	}
 
+	/**
+	 * 重连默认服务器
+	 *
+	 * @param activeFuture
+	 * @param serverAddresses
+	 */
 	private void reconnectDefaultServer(ChannelFuture activeFuture, List<InetSocketAddress> serverAddresses) {
 		try {
 			int reconnectServers = m_activeChannelHolder.getActiveIndex();

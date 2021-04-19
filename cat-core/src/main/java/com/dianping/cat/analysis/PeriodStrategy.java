@@ -18,7 +18,11 @@
  */
 package com.dianping.cat.analysis;
 
+/**
+ * 周期策略
+ */
 public class PeriodStrategy {
+
 	private long m_duration;
 
 	private long m_extraTime;
@@ -42,6 +46,7 @@ public class PeriodStrategy {
 	}
 
 	public long next(long now) {
+
 		long startTime = now - now % m_duration;
 
 		// for current period

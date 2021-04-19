@@ -44,13 +44,18 @@ import com.dianping.cat.configuration.client.entity.Server;
 import com.dianping.cat.configuration.client.transform.DefaultSaxParser;
 import com.dianping.cat.message.spi.MessageTree;
 
+/**
+ * 默认的客户端配置管理器
+ */
 @Named(type = ClientConfigManager.class)
 public class DefaultClientConfigManager implements LogEnabled, ClientConfigManager, Initializable {
 
+	/** 属性文件路径。客户端读取该文件app.name=tuia-adx-web */
 	private static final String PROPERTIES_FILE = "/META-INF/app.properties";
 
 	private ClientConfig m_config;
 
+	/** 采样率 */
 	private volatile double m_sampleRate = 1d;
 
 	private volatile boolean m_block = false;
@@ -157,7 +162,11 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 	@Override
 	public void initialize(File configFile) throws InitializationException {
 		try {
+
+			//客户端全局配置
 			ClientConfig globalConfig = null;
+
+			//客户端war包配置
 			ClientConfig warConfig = null;
 
 			if (configFile != null) {

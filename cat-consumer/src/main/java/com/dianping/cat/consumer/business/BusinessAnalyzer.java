@@ -63,6 +63,12 @@ public class BusinessAnalyzer extends AbstractMessageAnalyzer<BusinessReport> im
 		m_logger = logger;
 	}
 
+	/**
+	 * 获取应用程序的Business报表
+	 *
+	 * @param domain
+	 * @return
+	 */
 	@Override
 	public BusinessReport getReport(String domain) {
 		long period = getStartTime();
@@ -124,7 +130,11 @@ public class BusinessAnalyzer extends AbstractMessageAnalyzer<BusinessReport> im
 	@Override
 	protected void process(MessageTree tree) {
 		String domain = tree.getDomain();
+
+		//历史业务报表
 		BusinessReport report = m_reportManager.getHourlyReport(getStartTime(), domain, true);
+
+		//
 		List<Metric> metrics = tree.getMetrics();
 
 		for (Metric metric : metrics) {

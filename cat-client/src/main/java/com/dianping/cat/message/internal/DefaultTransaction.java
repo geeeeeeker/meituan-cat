@@ -76,10 +76,15 @@ public class DefaultTransaction extends AbstractMessage implements Transaction {
 				event.complete();
 				addChild(event);
 			} else {
+
+				/* 计算当前事务持续时间 */
 				if (m_durationInMicro == -1) {
 					m_durationInMicro = (System.nanoTime() - m_durationStart) / 1000L;
 				}
+
 				setCompleted(true);
+
+				/* 结束当前事务消息 */
 				if (m_manager != null) {
 					m_manager.end(this);
 				}

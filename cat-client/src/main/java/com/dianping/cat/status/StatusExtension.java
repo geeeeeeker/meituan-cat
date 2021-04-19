@@ -20,6 +20,9 @@ package com.dianping.cat.status;
 
 import java.util.Map;
 
+/**
+ * 系统状态扩展点
+ */
 public interface StatusExtension {
 
 	public String getId();

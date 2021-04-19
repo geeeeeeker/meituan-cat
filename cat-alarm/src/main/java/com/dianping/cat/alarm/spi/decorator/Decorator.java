@@ -23,16 +23,36 @@ import java.text.SimpleDateFormat;
 
 import com.dianping.cat.alarm.spi.AlertEntity;
 
+/**
+ * 装饰器
+ */
 public abstract class Decorator {
 
 	protected DateFormat m_format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
+	/**
+	 * 生成报警内容
+	 * 
+	 * @param alert
+	 * @return
+	 */
 	public String generateContent(AlertEntity alert) {
 		return alert.getContent();
 	}
 
+	/**
+	 * 生成报警标题
+	 *
+	 * @param alert
+	 * @return
+	 */
 	public abstract String generateTitle(AlertEntity alert);
 
+	/**
+	 * 装饰器标识
+	 *
+	 * @return
+	 */
 	public abstract String getId();
 
 }

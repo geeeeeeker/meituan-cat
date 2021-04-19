@@ -47,20 +47,27 @@ public class DefaultMessageTree implements MessageTree {
 
 	private Message m_message;
 
+	//消息ID
 	private String m_messageId;
 
+	//父消息ID
 	private String m_parentMessageId;
 
+	//根消息ID
 	private String m_rootMessageId;
 
 	private String m_sessionToken;
 
+	//线程组名称
 	private String m_threadGroupName;
 
+	//线程ID
 	private String m_threadId;
 
+	//线程名称
 	private String m_threadName;
 
+	//格式化消息ID
 	private MessageId m_formatMessageId;
 
 	private boolean m_discard = true;

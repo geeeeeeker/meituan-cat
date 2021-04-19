@@ -111,6 +111,11 @@ public class Cat {
 		return catHome;
 	}
 
+	/**
+	 * 获取当前线程上下文内的MessageTree的MessageId
+	 *
+	 * @return
+	 */
 	public static String getCurrentMessageId() {
 		try {
 			MessageTree tree = Cat.getManager().getThreadLocalMessageTree();
@@ -118,10 +123,12 @@ public class Cat {
 			if (tree != null) {
 				String messageId = tree.getMessageId();
 
+				//未设置消息ID则创建
 				if (messageId == null) {
 					messageId = Cat.createMessageId();
 					tree.setMessageId(messageId);
 				}
+
 				return messageId;
 			} else {
 				return null;
@@ -515,6 +522,13 @@ public class Cat {
 		}
 	}
 
+	/**
+	 * 新建Transaction报表消息实例
+	 *
+	 * @param type
+	 * @param name
+	 * @return
+	 */
 	public static Transaction newTransaction(String type, String name) {
 		try {
 			return Cat.getProducer().newTransaction(type, name);
