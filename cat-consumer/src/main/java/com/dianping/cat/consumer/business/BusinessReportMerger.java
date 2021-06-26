@@ -22,6 +22,9 @@ import com.dianping.cat.consumer.business.model.entity.BusinessReport;
 import com.dianping.cat.consumer.business.model.entity.Segment;
 import com.dianping.cat.consumer.business.model.transform.DefaultMerger;
 
+/**
+ *
+ */
 public class BusinessReportMerger extends DefaultMerger {
 
 	public BusinessReportMerger(BusinessReport businessReport) {

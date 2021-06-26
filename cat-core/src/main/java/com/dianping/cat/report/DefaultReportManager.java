@@ -325,6 +325,7 @@ public class DefaultReportManager<T> extends ContainerHolder implements ReportMa
 
 				m_reportDelegate.beforeSave(reports);
 
+				//存文件系统
 				if (policy.forFile()) {
 					bucket = m_bucketManager.getReportBucket(startTime, m_name, index);
 
@@ -335,6 +336,7 @@ public class DefaultReportManager<T> extends ContainerHolder implements ReportMa
 					}
 				}
 
+				//存库
 				if (policy.forDatabase()) {
 					storeDatabase(startTime, reports);
 				}

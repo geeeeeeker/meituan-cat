@@ -27,6 +27,12 @@ import com.dianping.cat.report.ReportManager;
  */
 public interface MessageAnalyzer {
 
+	/**
+	 * 判断分析器是否有资格处理消息。
+	 *
+	 * @param tree 消息树
+	 * @return 消息树中有对应的消息才有处理资格
+	 */
 	public boolean isEligable(MessageTree tree);
 
 	/**
@@ -36,6 +42,9 @@ public interface MessageAnalyzer {
 	 */
 	public void analyze(MessageQueue queue);
 
+	/**
+	 * 通知容器释放分析器相关组件
+	 */
 	public void destroy();
 
 	/**
@@ -51,7 +60,17 @@ public interface MessageAnalyzer {
 
 	public int getAnanlyzerCount(String name);
 
+	/**
+	 * 设置消息分析器组线程序号
+	 *
+	 * @param index
+	 */
 	public void setIndex(int index);
 
+	/**
+	 * 获取消息分析器对应的报表管理器
+	 *
+	 * @return
+	 */
 	public ReportManager<?> getReportManager();
 }

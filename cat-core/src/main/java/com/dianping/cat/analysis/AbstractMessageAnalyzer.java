@@ -45,6 +45,7 @@ public abstract class AbstractMessageAnalyzer<R> extends ContainerHolder impleme
 
 	protected Logger m_logger;
 
+	//消息分析器组线程序号
 	protected int m_index;
 
 	private long m_extraTime;
@@ -102,9 +103,12 @@ public abstract class AbstractMessageAnalyzer<R> extends ContainerHolder impleme
 
 	@Override
 	public void destroy() {
-		super.release(this);
-		ReportManager<?> manager = this.getReportManager();
 
+		//IoC容器释放当前报表分析器组件
+		super.release(this);
+
+		//IoC容器释放当前报表分析器关联的报表管理器组件
+		ReportManager<?> manager = this.getReportManager();
 		if (manager != null) {
 			manager.destory();
 		}
@@ -113,6 +117,12 @@ public abstract class AbstractMessageAnalyzer<R> extends ContainerHolder impleme
 	@Override
 	public abstract void doCheckpoint(boolean atEnd);
 
+	/**
+	 * 获取实时报表分析器的线程数量
+	 *
+	 * @param name
+	 * @return
+	 */
 	@Override
 	public int getAnanlyzerCount(String name) {
 		return m_serverConfigManager.getThreadsOfRealtimeAnalyzer(name);

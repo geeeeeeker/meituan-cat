@@ -30,6 +30,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+/**
+ * JVM信息收集器
+ */
 public class JvmInfoCollector {
     private static JvmInfoCollector collector = new JvmInfoCollector();
     private boolean hasOldGc = false;
@@ -40,6 +43,7 @@ public class JvmInfoCollector {
     private long lastYoungGcTime = 0;
     private long lastYoungGcCount = 0;
 
+    //YoungGC算法
     private Set<String> youngGcAlgorithm = new LinkedHashSet<String>() {
         private static final long serialVersionUID = -2953196532584721351L;
 
@@ -51,6 +55,7 @@ public class JvmInfoCollector {
         }
     };
 
+    //OldGC算法
     private Set<String> oldGcAlgorithm = new LinkedHashSet<String>() {
         private static final long serialVersionUID = -8267829533109860610L;
 
@@ -169,6 +174,7 @@ public class JvmInfoCollector {
     public void registerJVMCollector() {
         final StatusExtensionRegister instance = StatusExtensionRegister.getInstance();
 
+        //注册jvm.gc
         instance.register(new AbstractCollector() {
 
             @Override
@@ -184,6 +190,7 @@ public class JvmInfoCollector {
             }
         });
 
+        //注册jvm.memory
         instance.register(new AbstractCollector() {
 
 

@@ -33,10 +33,32 @@ public interface ReportDelegate<T> {
 
 	public String getDomain(T report);
 
+	/**
+	 * 制作报表
+	 *
+	 * @param domain
+	 * @param startTime
+	 * @param duration
+	 * @return
+	 */
 	public T makeReport(String domain, long startTime, long duration);
 
+	/**
+	 * 合并报表
+	 *
+	 * @param old
+	 * @param other
+	 * @return
+	 */
 	public T mergeReport(T old, T other);
 
+	/**
+	 * 解析XML格式报表
+	 *
+	 * @param xml
+	 * @return
+	 * @throws Exception
+	 */
 	public T parseXml(String xml) throws Exception;
 
 	public boolean createHourlyTask(T report);

@@ -40,6 +40,9 @@ import com.dianping.cat.Cat;
 import com.dianping.cat.configuration.NetworkInterfaceManager;
 import com.dianping.cat.util.CleanupHelper;
 
+/**
+ *
+ */
 @Named
 public class MessageIdFactory {
 	public static final long HOUR = 3600 * 1000L;

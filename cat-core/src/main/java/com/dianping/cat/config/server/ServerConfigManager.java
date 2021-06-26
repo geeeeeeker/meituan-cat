@@ -69,6 +69,7 @@ public class ServerConfigManager implements LogEnabled, Initializable {
 
 	public final static String REMOTE_SERVERS = "remote-servers";
 
+	/** 本地模式 */
 	public final static String LOCAL_MODE = "local-mode";
 
 	public final static String JOB_MACHINE = "job-machine";
@@ -383,6 +384,12 @@ public class ServerConfigManager implements LogEnabled, Initializable {
 		return Boolean.parseBoolean(getProperty("storage-nio-enable", "true"));
 	}
 
+	/**
+	 * 获取实时报表分析器线程数，默认2个线程。
+	 *
+	 * @param name
+	 * @return
+	 */
 	public int getThreadsOfRealtimeAnalyzer(String name) {
 		return Integer.parseInt(getProperty(name + "-analyzer-threads", "2"));
 	}

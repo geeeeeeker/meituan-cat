@@ -73,7 +73,7 @@ public class RealtimeConsumer extends ContainerHolder implements MessageConsumer
 
 		if (period != null) {
 
-			//向
+			//分发消息树，给到对应PeriodTask处理
 			period.distribute(tree);
 
 		} else {
@@ -82,6 +82,9 @@ public class RealtimeConsumer extends ContainerHolder implements MessageConsumer
 		}
 	}
 
+	/**
+	 * 线程退出时自动持久化；或管理页面点击时手动持久化。
+	 */
 	public void doCheckpoint() {
 		m_logger.info("starting do checkpoint.");
 

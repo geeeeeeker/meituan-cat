@@ -25,6 +25,9 @@ import com.dianping.cat.Cat;
 import com.dianping.cat.alarm.sender.entity.Sender;
 import com.dianping.cat.alarm.spi.AlertChannel;
 
+/**
+ *
+ */
 public class SmsSender extends AbstractSender {
 
 	public static final String ID = AlertChannel.SMS.getName();

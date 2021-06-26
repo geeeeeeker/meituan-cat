@@ -18,6 +18,9 @@
  */
 package com.dianping.cat.mvc;
 
+/**
+ * 历史导航
+ */
 public enum HistoryNav {
 
 	MONTH("month", "-1m", "+1m"),

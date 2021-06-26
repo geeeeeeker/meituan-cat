@@ -30,6 +30,7 @@ public class AlertEntity {
 
 	private String m_group;
 
+	/** 告警级别 */
 	private AlertLevel m_level;
 
 	private String m_metric;

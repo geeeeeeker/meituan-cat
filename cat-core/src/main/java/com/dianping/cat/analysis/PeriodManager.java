@@ -139,11 +139,17 @@ public class PeriodManager implements Task {
 		m_active = false;
 	}
 
+	/**
+	 * 启动周期任务
+	 *
+	 * @param startTime
+	 */
 	private void startPeriod(long startTime) {
 		long endTime = startTime + m_strategy.getDuration();
 		Period period = new Period(startTime, endTime, m_analyzerManager, m_serverStateManager, m_logger);
 
 		m_periods.add(period);
+
 		period.start();
 	}
 

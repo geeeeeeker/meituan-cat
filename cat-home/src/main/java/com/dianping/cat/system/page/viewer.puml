@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package org.unidal.web.mvc.view {
+  interface Viewer;
+
+  abstract class BaseFileViewer
+  abstract class BaseJspViewer
+
+  Viewer <|.. BaseFileViewer
+  Viewer <|.. BaseJspViewer
+}
+
+package com.dianping.cat.report.page.transaction {
+  class XmlViewer
+
+  Viewer <|.. XmlViewer
+}
+
+@enduml

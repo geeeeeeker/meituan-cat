@@ -27,6 +27,9 @@ import com.dianping.cat.Cat;
 import com.dianping.cat.alarm.sender.entity.Sender;
 import com.dianping.cat.alarm.spi.AlertChannel;
 
+/**
+ * 报警邮件发送者
+ */
 public class MailSender extends AbstractSender {
 
 	public static final String ID = AlertChannel.MAIL.getName();

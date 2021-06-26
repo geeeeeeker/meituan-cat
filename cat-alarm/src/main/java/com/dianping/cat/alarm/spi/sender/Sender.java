@@ -18,10 +18,24 @@
  */
 package com.dianping.cat.alarm.spi.sender;
 
+/**
+ * 报警消息发送器
+ */
 public interface Sender {
 
+	/**
+	 * 获取报警渠道类型标识
+	 *
+	 * @return 报警渠道类型标识
+	 */
 	public String getId();
 
+	/**
+	 * 发送报警消息
+	 *
+	 * @param message 报警消息
+	 * @return
+	 */
 	public boolean send(SendMessageEntity message);
 
 }

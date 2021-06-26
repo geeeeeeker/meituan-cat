@@ -30,11 +30,13 @@ public class CatTransaction implements Filter {
     
     private final static String DUBBO_REMOTING_ERROR="DUBBO_REMOTING_ERROR";
 
-
+    /** 线程上下文隔离Cat.Context */
     private static final ThreadLocal<Cat.Context> CAT_CONTEXT = new ThreadLocal<Cat.Context>();
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
+
+        //DubboCat未开启，绕过埋点
         if(!DubboCat.isEnable()){
             Result result =  invoker.invoke(invocation);
             return result;
@@ -51,7 +53,7 @@ public class CatTransaction implements Filter {
         Transaction transaction = null;
 
         try{
-            transaction = Cat.newTransaction(type, loggerName);
+            transaction = Cat.newTransaction(type /* PigeonCall或PigeonService */, loggerName /* 简单类名.方法名 */);
             Cat.Context context = getContext();
             if(Constants.CONSUMER_SIDE.equals(sideKey)){
                 createConsumerCross(url,transaction);
@@ -190,6 +192,12 @@ public class CatTransaction implements Filter {
         return context;
     }
 
+    /**
+     * 创建消费者跨端埋点
+     *
+     * @param url
+     * @param transaction
+     */
     private void createConsumerCross(URL url,Transaction transaction){
         Event crossAppEvent =   Cat.newEvent(CatConstants.CONSUMER_CALL_APP,getProviderAppName(url));
         Event crossServerEvent =   Cat.newEvent(CatConstants.CONSUMER_CALL_SERVER,url.getHost());
@@ -209,6 +217,12 @@ public class CatTransaction implements Filter {
         event.complete();
     }
 
+    /**
+     * 创建生产者跨端埋点
+     *
+     * @param url
+     * @param transaction
+     */
     private void createProviderCross(URL url,Transaction transaction){
         String consumerAppName = RpcContext.getContext().getAttachment(Constants.APPLICATION_KEY);
         if(StringUtils.isEmpty(consumerAppName)){

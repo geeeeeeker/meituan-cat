@@ -18,6 +18,9 @@
  */
 package com.dianping.cat.mvc;
 
+/**
+ * 报表导航
+ */
 public enum UrlNav {
 	SEVEN_DAY_BEFORE("-7d", -24 * 7),
 

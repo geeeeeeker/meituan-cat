@@ -71,6 +71,7 @@ public class DefaultMessageAnalyzerManager extends ContainerHolder
 			Cat.logError(e);
 		}
 
+		/** 报表分析器名称与分析器线程实例列表 */
 		Map<String, List<MessageAnalyzer>> map = m_analyzers.get(startTime);
 
 		if (map == null) {
@@ -93,14 +94,17 @@ public class DefaultMessageAnalyzerManager extends ContainerHolder
 				if (analyzers == null) {
 					analyzers = new ArrayList<MessageAnalyzer>();
 
+					//常规使用的实时消息分析器
 					MessageAnalyzer analyzer = lookup(MessageAnalyzer.class, name);
 
 					analyzer.setIndex(0);
 					analyzer.initialize(startTime, m_duration, m_extraTime);
 					analyzers.add(analyzer);
 
+					//消息分析器合计数量
 					int count = analyzer.getAnanlyzerCount(name);
 
+					//临时使用的实时消息分析器
 					for (int i = 1; i < count; i++) {
 						MessageAnalyzer tempAnalyzer = lookup(MessageAnalyzer.class, name);
 
@@ -108,6 +112,8 @@ public class DefaultMessageAnalyzerManager extends ContainerHolder
 						tempAnalyzer.initialize(startTime, m_duration, m_extraTime);
 						analyzers.add(tempAnalyzer);
 					}
+
+					//保存给定名称的消息分析器组
 					map.put(name, analyzers);
 				}
 			}

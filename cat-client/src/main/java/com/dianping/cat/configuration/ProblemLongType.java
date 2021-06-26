@@ -62,8 +62,10 @@ public enum ProblemLongType {
 		}
 	};
 
+	//问题报表类型
 	private String m_name;
 
+	//展示阀值
 	private int m_threshold;
 
 	private ProblemLongType(String name, int threshold) {

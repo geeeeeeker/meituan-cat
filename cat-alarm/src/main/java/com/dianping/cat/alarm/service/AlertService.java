@@ -33,12 +33,22 @@ import com.dianping.cat.alarm.AlertDao;
 import com.dianping.cat.alarm.spi.AlertEntity;
 import com.dianping.cat.alarm.spi.sender.SendMessageEntity;
 
+/**
+ * 告警业务服务
+ */
 @Named
 public class AlertService {
 
 	@Inject
 	private AlertDao m_alertDao;
 
+	/**
+	 * 构建告警实体
+	 *
+	 * @param alertEntity
+	 * @param message
+	 * @return
+	 */
 	private Alert buildAlert(AlertEntity alertEntity, SendMessageEntity message) {
 		Alert alert = new Alert();
 
@@ -52,6 +62,14 @@ public class AlertService {
 		return alert;
 	}
 
+	/**
+	 * 查询指定条件的告警实体列表
+	 *
+	 * @param start
+	 * @param end
+	 * @param type
+	 * @return
+	 */
 	public List<Alert> query(Date start, Date end, String type) {
 		List<Alert> alerts = new LinkedList<Alert>();
 
@@ -67,6 +85,12 @@ public class AlertService {
 		return alerts;
 	}
 
+	/**
+	 * 插入告警数据
+	 *
+	 * @param alertEntity
+	 * @param message
+	 */
 	public void insert(AlertEntity alertEntity, SendMessageEntity message) {
 		Alert alert = buildAlert(alertEntity, message);
 

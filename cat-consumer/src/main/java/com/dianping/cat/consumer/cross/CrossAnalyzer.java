@@ -36,6 +36,9 @@ import org.unidal.lookup.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * 跨服务调用报表分析器
+ */
 @Named(type = MessageAnalyzer.class, value = CrossAnalyzer.ID, instantiationStrategy = Named.PER_LOOKUP)
 public class CrossAnalyzer extends AbstractMessageAnalyzer<CrossReport> implements LogEnabled {
 	public static final String ID = "cross";

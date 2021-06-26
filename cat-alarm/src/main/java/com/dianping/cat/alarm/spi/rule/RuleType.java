@@ -36,6 +36,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * 告警规则
+ */
 public enum RuleType {
 
 	DecreasePercentage {
@@ -484,11 +487,17 @@ public enum RuleType {
 					Pair<File, File> files = generateClassFile(rawValue);
 					File userDefinedFolder = files.getKey();
 					File userDefinedClassFile = files.getValue();
+
+					//获取Java编译器
 					JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+					//编译源码
 					compiler.run(null, null, null, userDefinedClassFile.getPath());
 
+					//使用URL类加载器，选择根据URL加载类字节码
 					URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] { userDefinedFolder.toURI().toURL() });
+					//加载类字节码
 					Class<?> cls = Class.forName("UserDefinedRule", true, classLoader);
+					//创建字节码对象实例
 					instance = (MonitorRule) cls.newInstance();
 
 					m_rules.put(rawValue, instance);
@@ -585,6 +594,14 @@ public enum RuleType {
 		return builder.toString();
 	}
 
+	/**
+	 * 执行规则
+	 *
+	 * @param values
+	 * @param baselines
+	 * @param rawValue
+	 * @return
+	 */
 	public abstract Pair<Boolean, String> executeRule(double[] values, double[] baselines, String rawValue);
 
 	public abstract String getId();
@@ -619,6 +636,9 @@ public enum RuleType {
 		return Double.parseDouble(text);
 	}
 
+	/**
+	 * 监控器规则
+	 */
 	public interface MonitorRule {
 		public Pair<Boolean, String> checkData(double[] values, double[] baselineValues);
 	}

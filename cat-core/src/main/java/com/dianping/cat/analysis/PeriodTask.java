@@ -68,6 +68,8 @@ public class PeriodTask implements Task, LogEnabled {
 	 */
 	public boolean enqueue(MessageTree tree) {
 		if (m_analyzer.isEligable(tree)) {
+
+			//往任务线程的阻塞队列里面塞入消息树
 			boolean result = m_queue.offer(tree);
 
 			if (!result) { // trace queue overflow
@@ -108,6 +110,9 @@ public class PeriodTask implements Task, LogEnabled {
 		return m_analyzer.getClass().getSimpleName() + "-" + cal.get(Calendar.HOUR_OF_DAY) + "-" + m_index;
 	}
 
+	/**
+	 * 读取阻塞队列中的消息，交由具体消息分析器处理
+	 */
 	@Override
 	public void run() {
 		try {

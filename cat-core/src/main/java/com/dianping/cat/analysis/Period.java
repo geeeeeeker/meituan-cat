@@ -43,7 +43,7 @@ public class Period {
 
 	private long m_endTime;
 
-	private Map<String /* 分析器名称 */, List<PeriodTask> > m_tasks;
+	private Map<String /* 分析器名称 */, List<PeriodTask> /* 周期任务列表 */> m_tasks;
 
 	@Inject
 	private MessageAnalyzerManager m_analyzerManager;
@@ -95,19 +95,22 @@ public class Period {
 
 		for (Entry<String, List<PeriodTask>> entry : m_tasks.entrySet()) {
 
-			//周期任务列表
+			//周期任务线程表
 			List<PeriodTask> tasks = entry.getValue();
 
-			int length = tasks.size();
+			/* 单个任务线程选择0，多个任务线程由哈希取模算法决定 */
+			int length = tasks.size(); //线程数
 			int index = 0;
-			boolean manyTasks = length > 1;
-
+			boolean manyTasks = length > 1; //是否有多个任务线程
 			if (manyTasks) {
 				index = Math.abs(domain.hashCode()) % length;
 			}
 			PeriodTask task = tasks.get(index);
+
+
 			boolean enqueue = task.enqueue(tree);
 
+			//单任务线程入队失败，标记失败；多任务线程，换个线程继续入队，若失败同样标记
 			if (!enqueue) {
 				if (manyTasks) {
 					task = tasks.get((index + 1) % length);
@@ -122,9 +125,11 @@ public class Period {
 			}
 		}
 
+		//若入队不成功并且消息树非处理丢失
 		if ((!success) && (!tree.isProcessLoss())) {
+			//消息合计丢失数量+1
 			m_serverStateManager.addMessageTotalLoss(tree.getDomain(), 1);
-
+      //标记消息树处理过程丢失
 			tree.setProcessLoss(true);
 		}
 	}
@@ -196,11 +201,14 @@ public class Period {
 		return timestamp >= m_startTime && timestamp < m_endTime;
 	}
 
+	/**
+	 * 启动周期任务
+	 */
 	public void start() {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		m_logger.info(String.format("Starting %s tasks in period [%s, %s]", m_tasks.size(),	df.format(new Date(m_startTime)),
-								df.format(new Date(m_endTime - 1))));
+								df.format(new Date(m_endTime - 1 /* 本周期结束小于下个周期开始时间 */))));
 
 		for (Entry<String, List<PeriodTask>> tasks : m_tasks.entrySet()) {
 			List<PeriodTask> taskList = tasks.getValue();
@@ -210,6 +218,7 @@ public class Period {
 
 				task.setIndex(i);
 
+				//启动实时消费者线程
 				Threads.forGroup("Cat-RealtimeConsumer").start(task);
 			}
 		}

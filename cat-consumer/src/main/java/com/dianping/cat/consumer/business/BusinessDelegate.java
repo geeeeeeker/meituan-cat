@@ -66,6 +66,14 @@ public class BusinessDelegate implements ReportDelegate<BusinessReport> {
 		return report.getDomain();
 	}
 
+	/**
+	 * 制作报表
+	 *
+	 * @param domain
+	 * @param startTime
+	 * @param duration
+	 * @return
+	 */
 	@Override
 	public BusinessReport makeReport(String domain, long startTime, long duration) {
 		BusinessReport report = new BusinessReport(domain);

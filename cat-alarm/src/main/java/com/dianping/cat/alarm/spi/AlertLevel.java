@@ -18,6 +18,9 @@
  */
 package com.dianping.cat.alarm.spi;
 
+/**
+ * 告警级别
+ */
 public enum AlertLevel {
 
 	WARNING("warning", 1),

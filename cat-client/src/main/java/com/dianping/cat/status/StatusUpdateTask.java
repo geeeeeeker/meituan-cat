@@ -131,7 +131,7 @@ public class StatusUpdateTask implements Task, Initializable {
 	@Override
 	public void initialize() throws InitializationException {
 
-		//获取本地助力地址
+		//获取本机的主机地址
 		m_ipAddress = NetworkInterfaceManager.INSTANCE.getLocalHostAddress();
 	}
 
@@ -176,6 +176,7 @@ public class StatusUpdateTask implements Task, Initializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		MessageProducer cat = Cat.getProducer();
 		Transaction reboot = cat.newTransaction("System", "Reboot");
 

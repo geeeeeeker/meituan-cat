@@ -18,6 +18,9 @@
  */
 package com.dianping.cat.alarm.spi;
 
+/**
+ * 告警渠道
+ */
 public enum AlertChannel {
 
 	MAIL("mail"),
